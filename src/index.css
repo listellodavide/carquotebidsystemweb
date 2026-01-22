@@ -1,6 +1,17 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-brand-blue: #0047AB;
+  --color-brand-navy: #000080;
+  --color-brand-emerald: #50C878;
+  --color-brand-teal: #008080;
+
+  /* Mapping for convenience if desired */
+  --color-deep-blue: var(--color-brand-blue);
+  --color-soft-navy: var(--color-brand-navy);
+  --color-emerald-green: var(--color-brand-emerald);
+  --color-soft-teal: var(--color-brand-teal);
+}
 
 * {
   margin: 0;
