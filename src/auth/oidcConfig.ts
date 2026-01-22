@@ -6,7 +6,7 @@ export const oidcConfig: UserManagerSettings = {
     redirect_uri: 'http://localhost:5173/callback',
     post_logout_redirect_uri: 'http://localhost:5173/',
     response_type: 'code',
-    scope: 'openid profile email roles',
+    scope: 'openid',
     automaticSilentRenew: true,
     loadUserInfo: true
 }
