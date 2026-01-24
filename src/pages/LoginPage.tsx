@@ -1,35 +1,64 @@
-import React from 'react'
-import { useAuth } from 'react-oidc-context'
-import { Navigate } from 'react-router-dom'
-import { Wrench } from 'lucide-react'
+import React, { useEffect } from 'react';
+import { useAuth } from '../auth/AuthProvider';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-export const LoginPage = () => {
-    const auth = useAuth()
+export const LoginPage: React.FC = () => {
+    const { login, isAuthenticated, isLoading } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    if (auth.isAuthenticated) {
-        return <Navigate to="/welcome" replace />
-    }
+    useEffect(() => {
+        if (isAuthenticated && !isLoading) {
+            const from = (location.state as any)?.from?.pathname || '/welcome';
+            navigate(from, { replace: true });
+        }
+    }, [isAuthenticated, isLoading, navigate, location]);
+
+    const handleLogin = () => {
+        login();
+    };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100">
-            <div className="bg-white p-12 rounded-2xl shadow-xl max-w-md w-full border border-slate-200">
-                <div className="flex items-center justify-center mb-8">
-                    <Wrench className="w-16 h-16 text-blue-600" />
-                </div>
-                <h1 className="text-3xl font-bold text-slate-800 text-center mb-2">Mechanik</h1>
-                <p className="text-slate-500 text-center mb-8">Car Repair Quotes & Bidding Platform</p>
-
+        <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100vh',
+            fontFamily: 'Inter, sans-serif',
+            backgroundColor: '#f8f9fa'
+        }}>
+            <div style={{
+                padding: '40px',
+                borderRadius: '12px',
+                backgroundColor: '#ffffff',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                textAlign: 'center',
+                maxWidth: '400px',
+                width: '100%'
+            }}>
+                <h1 style={{ marginBottom: '20px', color: '#1a1a1a' }}>Welcome</h1>
+                <p style={{ marginBottom: '30px', color: '#666' }}>Please login to access the system.</p>
                 <button
-                    onClick={() => auth.signinRedirect()}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-[1.02] shadow-md"
+                    onClick={handleLogin}
+                    style={{
+                        padding: '12px 24px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        backgroundColor: '#007bff',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        width: '100%',
+                        transition: 'background-color 0.2s'
+                    }}
+                    onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
+                    onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
                 >
                     Login with Keycloak
                 </button>
-
-                <p className="text-xs text-slate-400 text-center mt-6">
-                    Secure authentication via Keycloak SSO
-                </p>
             </div>
         </div>
-    )
-}
+    );
+};

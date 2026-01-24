@@ -1,24 +1,27 @@
-import React from 'react'
-import { useAuth } from 'react-oidc-context'
-import { Navigate } from 'react-router-dom'
+import React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from './AuthProvider';
 
-interface Props {
-    children: JSX.Element
+interface ProtectedRouteProps {
+    children: React.ReactNode;
 }
 
-export const ProtectedRoute = ({ children }: Props) => {
-    const auth = useAuth()
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+    const { isAuthenticated, isLoading } = useAuth();
+    const location = useLocation();
 
-    if (!auth.isAuthenticated) {
-        if (auth.isLoading) {
-            return (
-                <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100">
-                    <div className="text-slate-600">Loading...</div>
-                </div>
-            )
-        }
-        return <Navigate to="/" replace />
+    if (isLoading) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <div>Loading session...</div>
+            </div>
+        );
     }
 
-    return children
-}
+    if (!isAuthenticated) {
+        // Redirect to login page, but save the current location they were trying to go to
+        return <Navigate to="/" state={{ from: location }} replace />;
+    }
+
+    return <>{children}</>;
+};
